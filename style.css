@@ -410,7 +410,6 @@ html.lang-ar .nav-item button {
   background-image: url('assets/logo_symbol.png');
   background-repeat: no-repeat;
   background-size: contain;
-  filter: invert(1);
 }
 
 html.lang-ar .cover-symbol-crop {
@@ -1587,6 +1586,13 @@ html.lang-ar .cover-symbol-crop {
 }
 
 /* 3. Delivery Van */
+.van-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .van-mockup {
   width: 500px;
   height: 220px;
@@ -1676,6 +1682,13 @@ html.lang-ar .cover-symbol-crop {
 }
 
 /* 4. Packaging Box (White cardboard box with tape) */
+.box-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .packaging-box-white {
   width: 280px;
   height: 280px;
@@ -2309,16 +2322,16 @@ html.lang-ar .btn-menu {
     overflow: visible;
   }
 
-  /* Transform Sidebar into Sticky Top Bar */
+  /* Transform Sidebar into Sticky Top Bar - Reduced height to 56px */
   .sidebar {
     width: 100%;
-    height: 70px;
+    height: 56px;
     position: sticky;
     top: 0;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
+    padding: 8px 24px;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1000;
@@ -2341,13 +2354,13 @@ html.lang-ar .btn-menu {
     display: inline-flex;
   }
 
-  /* Sidebar navigation becomes a slide-out drawer */
+  /* Sidebar navigation becomes a slide-out drawer - Adjusted top to 56px */
   .nav-links {
     position: fixed;
-    top: 70px;
+    top: 56px;
     left: -320px; /* Hidden offscreen by default LTR */
     width: 300px;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 56px);
     background: rgba(17, 17, 17, 0.98);
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     flex-direction: column;
@@ -2386,11 +2399,11 @@ html.lang-ar .btn-menu {
     display: none !important; /* Hide print on mobile/tablet */
   }
 
-  /* Viewport and Book Container adjustments */
+  /* Viewport and Book Container adjustments - Adjusted top spacing */
   .viewport {
     padding: 24px;
     height: auto;
-    min-height: calc(100vh - 70px);
+    min-height: calc(100vh - 56px);
     display: block;
     overflow: visible;
   }
@@ -2434,11 +2447,40 @@ html.lang-ar .btn-menu {
     height: auto;
   }
 
+  /* Editorial variations - force stacked layout and full width under 1280px */
+  .logo-editorial-container {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 20px !important;
+    margin-bottom: 24px !important;
+    display: flex !important;
+  }
+
   .logo-editorial-card {
-    width: 100%;
-    height: auto;
-    min-height: 280px;
-    padding: 40px;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 200px !important;
+    margin: 0 !important;
+    padding: 24px !important;
+  }
+
+  /* Reflow Graphic Language pattern container */
+  .pattern-container {
+    flex-direction: column !important;
+    gap: 24px !important;
+    height: auto !important;
+    display: flex !important;
+  }
+
+  .pattern-visual-container {
+    width: 100% !important;
+    height: 250px !important;
+    flex: none !important;
+  }
+
+  .pattern-info {
+    width: 100% !important;
+    flex: none !important;
   }
 
   /* Responsive Grid System (Tablet: 2 columns) */
@@ -2485,11 +2527,78 @@ html.lang-ar .btn-menu {
 /* Mobile responsive adjustments (< 768px) */
 @media (max-width: 767px) {
   .viewport {
-    padding: 16px;
+    padding: 16px 12px;
   }
 
   .brand-page {
-    padding: 30px 20px;
+    padding: 24px 16px;
+  }
+
+  /* Compact Mobile Header Padding & Sizing */
+  .sidebar {
+    padding: 8px 12px !important;
+  }
+
+  .brand-meta {
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+  }
+
+  .brand-meta img {
+    height: 22px !important;
+  }
+
+  .brand-title-text {
+    font-size: 0.95rem !important;
+    white-space: nowrap !important;
+  }
+
+  .btn-menu {
+    padding: 6px !important;
+    margin-right: 6px !important;
+  }
+
+  html.lang-ar .btn-menu {
+    margin-right: 0 !important;
+    margin-left: 6px !important;
+  }
+
+  /* Compact segmented control for language switch on mobile */
+  .lang-switch-pill {
+    border-radius: 14px !important;
+    padding: 1px !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    gap: 1px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .lang-btn {
+    min-width: 36px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+    border-radius: 12px !important;
+  }
+
+  .btn-icon {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    font-size: 0.7rem !important;
+    border-radius: 6px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .sidebar-footer {
+    gap: 6px !important;
   }
 
   /* Mobile Grid (Single column) */
@@ -2588,20 +2697,70 @@ html.lang-ar .btn-menu {
     min-width: 60px;
   }
 
+  /* Delivery Van scaled footprint wrapping container */
+  .van-wrapper {
+    width: 100% !important;
+    max-width: 500px;
+    height: 160px !important;
+    overflow: hidden;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
   /* Scale complex vehicle mockup */
   .van-mockup {
-    transform: scale(0.7);
-    transform-origin: center center;
-    margin: -20px auto;
+    transform: scale(0.6) !important;
+    transform-origin: center center !important;
+    margin: 0 !important;
+  }
+
+  /* Packaging Box scaled footprint wrapping container */
+  .box-wrapper {
+    width: 100% !important;
+    max-width: 280px;
+    height: 230px !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    position: relative;
   }
 
   .packaging-box-white {
-    margin: 0 auto;
-    transform: scale(0.9);
+    margin: 0 !important;
+    transform: scale(0.8) !important;
+    transform-origin: center center !important;
   }
   
   .pattern-visual-container {
     height: 200px;
+  }
+
+  /* Reflow photography gallery to a single-column layout on mobile */
+  .photo-gallery {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Reflow motion storyboard to layout naturally without scroll-trapping */
+  .motion-layout {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Prevent clearspace canvas and SVG overlays overflow */
+  .clearspace-canvas {
+    height: 220px !important;
+  }
+
+  .clearspace-canvas img {
+    width: 180px !important;
+  }
+
+  .min-size-box {
+    padding: 16px !important;
+    gap: 16px !important;
   }
 
   /* Make header and footer compact */
@@ -2611,15 +2770,32 @@ html.lang-ar .btn-menu {
     font-size: 0.65rem;
   }
 
+  /* Editorial padding separation for footer */
   .page-master-footer {
-    margin-top: 20px;
+    margin-top: 48px !important;
     padding-top: 12px;
     font-size: 0.65rem;
   }
 
-  /* Large tap target styles for buttons */
-  .lang-btn, .btn-icon, .control-btn, .ui-mobile-sub-btn, .nav-item button {
+  /* Large tap target styles for page control buttons only */
+  .control-btn, .ui-mobile-sub-btn, .nav-item button {
     min-height: 40px; /* Touch-friendly size */
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra scaling for narrow screens */
+  .van-wrapper {
+    height: 135px !important;
+  }
+  .van-mockup {
+    transform: scale(0.52) !important;
+  }
+  .box-wrapper {
+    height: 190px !important;
+  }
+  .packaging-box-white {
+    transform: scale(0.65) !important;
   }
 }
 
