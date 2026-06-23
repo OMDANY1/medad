@@ -1,0 +1,331 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const htmlRoot = document.documentElement;
+  const pages = document.querySelectorAll('.brand-page');
+  const navItems = document.querySelectorAll('.nav-item');
+  const bookContainer = document.querySelector('.book-container');
+  const viewport = document.querySelector('.viewport');
+  
+  let currentPageIndex = 0;
+  
+  // ----------------------------------------------------
+  // 1. Viewport Scaling (A4 Landscape aspect-ratio)
+  // ----------------------------------------------------
+  const A4_WIDTH = 1414;
+  const A4_HEIGHT = 1000;
+  
+  function adjustScale() {
+    if (window.matchMedia('print').matches) {
+      bookContainer.style.transform = 'none';
+      return;
+    }
+    
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+    
+    // Calculate scale factor with a 40px buffer margin
+    const scaleX = (viewportWidth - 80) / A4_WIDTH;
+    const scaleY = (viewportHeight - 80) / A4_HEIGHT;
+    const scale = Math.min(scaleX, scaleY, 1.25); // Limit max scale to 1.25x
+    
+    bookContainer.style.transform = `scale(${scale})`;
+  }
+  
+  window.addEventListener('resize', adjustScale);
+  adjustScale();
+  setTimeout(adjustScale, 100);
+
+  // ----------------------------------------------------
+  // 2. Bilingual Support & Language Switcher
+  // ----------------------------------------------------
+  const btnLangEn = document.getElementById('btn-lang-en');
+  const btnLangAr = document.getElementById('btn-lang-ar');
+  
+  function setLanguage(lang) {
+    if (lang === 'ar') {
+      htmlRoot.classList.remove('lang-en');
+      htmlRoot.classList.add('lang-ar');
+      htmlRoot.setAttribute('dir', 'rtl');
+      
+      if (btnLangAr) btnLangAr.classList.add('active');
+      if (btnLangEn) btnLangEn.classList.remove('active');
+      
+      localStorage.setItem('medad-lang', 'ar');
+    } else {
+      htmlRoot.classList.remove('lang-ar');
+      htmlRoot.classList.add('lang-en');
+      htmlRoot.setAttribute('dir', 'ltr');
+      
+      if (btnLangEn) btnLangEn.classList.add('active');
+      if (btnLangAr) btnLangAr.classList.remove('active');
+      
+      localStorage.setItem('medad-lang', 'en');
+    }
+    
+    // Force scale adjustment on direction change
+    adjustScale();
+  }
+  
+  if (btnLangEn) {
+    btnLangEn.addEventListener('click', () => setLanguage('en'));
+  }
+  if (btnLangAr) {
+    btnLangAr.addEventListener('click', () => setLanguage('ar'));
+  }
+  
+  // Load saved language, defaulting to English
+  const savedLang = localStorage.getItem('medad-lang') || 'en';
+  setLanguage(savedLang);
+
+  // ----------------------------------------------------
+  // 3. Slide Navigation System
+  // ----------------------------------------------------
+  function goToPage(index) {
+    if (index < 0 || index >= pages.length) return;
+    
+    pages[currentPageIndex].classList.remove('active');
+    navItems[currentPageIndex].classList.remove('active');
+    
+    currentPageIndex = index;
+    pages[currentPageIndex].classList.add('active');
+    navItems[currentPageIndex].classList.add('active');
+    
+    handlePageEnter(currentPageIndex);
+  }
+  
+  function nextPage() {
+    if (currentPageIndex < pages.length - 1) {
+      goToPage(currentPageIndex + 1);
+    }
+  }
+  
+  function prevPage() {
+    if (currentPageIndex > 0) {
+      goToPage(currentPageIndex - 1);
+    }
+  }
+  
+  navItems.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      goToPage(index);
+    });
+  });
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || (e.key === ' ' && document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT')) {
+      nextPage();
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevPage();
+      e.preventDefault();
+    }
+  });
+  
+  // Set tabIndex dynamically for pages to prevent tab focus overflow
+  pages.forEach(page => {
+    page.setAttribute('tabindex', '-1');
+  });
+
+  function handlePageEnter(pageIndex) {
+    // Control Lottie animations based on active page (Page 20 is index 19)
+    if (pageIndex === 19) {
+      if (lottieAnimEn) lottieAnimEn.play();
+      if (lottieAnimAr) lottieAnimAr.play();
+    } else {
+      if (lottieAnimEn) lottieAnimEn.pause();
+      if (lottieAnimAr) lottieAnimAr.pause();
+    }
+  }
+
+  // ----------------------------------------------------
+  // 4. Mobile Screen Simulator Scoped Swapper (Prevents Cross-Talk)
+  // ----------------------------------------------------
+  function initMobileSimulators() {
+    const scopes = ['.lang-en', '.lang-ar'];
+    
+    scopes.forEach(scope => {
+      const parent = document.querySelector(`#page-18 ${scope}`);
+      if (!parent) return;
+      
+      const phoneStates = parent.querySelectorAll('.phone-screen-state');
+      const phoneDots = parent.querySelectorAll('.phone-dot');
+      const subTabBtns = parent.querySelectorAll('.ui-mobile-sub-btn');
+      
+      function setPhoneStateScoped(stateIndex) {
+        phoneStates.forEach((state, idx) => {
+          if (idx === stateIndex) {
+            state.classList.add('active');
+          } else {
+            state.classList.remove('active');
+          }
+        });
+        
+        phoneDots.forEach((dot, idx) => {
+          if (idx === stateIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+        
+        subTabBtns.forEach((btn, idx) => {
+          if (idx === stateIndex) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      }
+      
+      phoneDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          setPhoneStateScoped(index);
+        });
+      });
+      
+      subTabBtns.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          setPhoneStateScoped(index);
+        });
+      });
+      
+      // Auto-rotate the active visible simulator screen
+      setInterval(() => {
+        // Only auto-rotate if Page 18 is currently active
+        if (currentPageIndex === 17) {
+          // Check if parent scope container is currently visible in the DOM
+          const style = window.getComputedStyle(parent);
+          if (style.display !== 'none') {
+            let activeIdx = 0;
+            phoneStates.forEach((state, idx) => {
+              if (state.classList.contains('active')) {
+                activeIdx = idx;
+              }
+            });
+            const nextIdx = (activeIdx + 1) % phoneStates.length;
+            setPhoneStateScoped(nextIdx);
+          }
+        }
+      }, 5000);
+    });
+  }
+
+  // Initialize scoped simulators
+  initMobileSimulators();
+
+  // ----------------------------------------------------
+  // 5. Fullscreen & Print Controller triggers
+  // ----------------------------------------------------
+  const btnFullscreen = document.getElementById('btn-fullscreen');
+  if (btnFullscreen) {
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+  }
+  
+  const btnPrint = document.getElementById('btnPrint');
+  if (btnPrint) {
+    btnPrint.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  // ----------------------------------------------------
+  // 6. Page 20: Robust Lottie Player Initialization
+  // ----------------------------------------------------
+  let lottieAnimEn = null;
+  let lottieAnimAr = null;
+  
+  function displayLottieFallback(containerEn, containerAr) {
+    const fallbackHTML = `
+      <div class="lottie-fallback-svg" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; opacity:0.85; pointer-events:none;">
+        <svg viewBox="0 0 100 100" style="width: 80px; height: 80px; fill: var(--primary-green);">
+          <path d="M50 15 C30 15, 15 30, 15 50 C15 70, 30 85, 50 85 C70 85, 85 70, 85 50 C85 30, 70 15, 50 15 Z M50 25 C63 25, 75 37, 75 50 C75 63, 63 75, 50 75 C37 75, 25 63, 25 50 C25 37, 37 25, 50 25 Z" />
+        </svg>
+        <span class="en-only" style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:8px; font-family:var(--font-english);">Animation unavailable (Static fallback)</span>
+        <span class="ar-only" style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:8px; font-family:var(--font-arabic);">الحركة غير متوفرة (شعار ثابت)</span>
+      </div>
+    `;
+    if (containerEn) containerEn.innerHTML = fallbackHTML;
+    if (containerAr) containerAr.innerHTML = fallbackHTML;
+  }
+  
+  async function initLottiePlayers() {
+    const containerEn = document.getElementById('lottie-player-en');
+    const containerAr = document.getElementById('lottie-player-ar');
+    
+    if (!containerEn && !containerAr) return;
+    
+    try {
+      // 1. Confirm that /assets/data.json exists
+      const response = await fetch('assets/data.json');
+      if (!response.ok) {
+        throw new Error(`Failed to load assets/data.json: status ${response.status}`);
+      }
+      
+      // 2. Parse the file successfully
+      const animData = await response.json();
+      
+      // 3. Handle malformed or missing JSON structure gracefully
+      if (!animData || typeof animData !== 'object' || !animData.v) {
+        throw new Error("Invalid Lottie JSON structure: missing version key 'v'");
+      }
+      
+      // Initialize Lottie
+      if (typeof lottie !== 'undefined') {
+        if (containerEn) {
+          lottieAnimEn = lottie.loadAnimation({
+            container: containerEn,
+            renderer: 'svg',
+            loop: true,
+            autoplay: false,
+            animationData: animData
+          });
+        }
+        
+        if (containerAr) {
+          lottieAnimAr = lottie.loadAnimation({
+            container: containerAr,
+            renderer: 'svg',
+            loop: true,
+            autoplay: false,
+            animationData: animData
+          });
+        }
+        
+        bindReplayControls();
+      }
+    } catch (err) {
+      console.warn("Lottie loading/parsing failed, using fallback:", err.message);
+      displayLottieFallback(containerEn, containerAr);
+    }
+  }
+  
+  function bindReplayControls() {
+    const btnReplayEn = document.getElementById('btn-replay-lottie-en');
+    if (btnReplayEn) {
+      btnReplayEn.addEventListener('click', () => {
+        if (lottieAnimEn) {
+          lottieAnimEn.goToAndPlay(0, true);
+        }
+      });
+    }
+    
+    const btnReplayAr = document.getElementById('btn-replay-lottie-ar');
+    if (btnReplayAr) {
+      btnReplayAr.addEventListener('click', () => {
+        if (lottieAnimAr) {
+          lottieAnimAr.goToAndPlay(0, true);
+        }
+      });
+    }
+  }
+  
+  // Initialize Lottie
+  initLottiePlayers();
+});
