@@ -51,6 +51,7 @@ body {
   color: var(--white);
   overflow: hidden;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -63,6 +64,7 @@ body {
   display: flex;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   background-color: #0b0b0b;
 }
@@ -1376,6 +1378,7 @@ html.lang-ar .cover-symbol-crop {
 .notif-card {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 16px;
@@ -2319,29 +2322,36 @@ html.lang-ar .btn-menu {
     flex-direction: column;
     height: auto;
     min-height: 100vh;
+    min-height: 100dvh;
     overflow: visible;
   }
 
-  /* Transform Sidebar into Sticky Top Bar - Reduced height to 56px */
+  /* Transform Sidebar into Sticky Top Bar - Reduced height to 56px with safe-area padding */
   .sidebar {
     width: 100%;
-    height: 56px;
+    height: calc(56px + env(safe-area-inset-top, 0px));
     position: sticky;
     top: 0;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: 8px 24px;
+    padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+    padding-left: calc(24px + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(24px + env(safe-area-inset-right, 0px)) !important;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1000;
     background-color: rgba(17, 17, 17, 0.98);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
   }
 
   html.lang-ar .sidebar {
     border-left: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-left: calc(24px + env(safe-area-inset-right, 0px)) !important;
+    padding-right: calc(24px + env(safe-area-inset-left, 0px)) !important;
   }
 
   .brand-meta {
@@ -2354,17 +2364,20 @@ html.lang-ar .btn-menu {
     display: inline-flex;
   }
 
-  /* Sidebar navigation becomes a slide-out drawer - Adjusted top to 56px */
+  /* Sidebar navigation becomes a slide-out drawer - Adjusted top and bottom safe-area insets */
   .nav-links {
     position: fixed;
-    top: 56px;
+    top: calc(56px + env(safe-area-inset-top, 0px));
     left: -320px; /* Hidden offscreen by default LTR */
     width: 300px;
-    height: calc(100vh - 56px);
+    height: calc(100vh - 56px - env(safe-area-inset-top, 0px));
+    height: calc(100dvh - 56px - env(safe-area-inset-top, 0px));
     background: rgba(17, 17, 17, 0.98);
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     flex-direction: column;
     padding: 24px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: calc(24px + env(safe-area-inset-left, 0px)) !important;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 999;
     box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
@@ -2377,6 +2390,8 @@ html.lang-ar .btn-menu {
     border-right: none;
     border-left: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    padding-left: 24px !important;
+    padding-right: calc(24px + env(safe-area-inset-right, 0px)) !important;
   }
 
   /* When drawer is open, shift it into view */
@@ -2402,8 +2417,10 @@ html.lang-ar .btn-menu {
   /* Viewport and Book Container adjustments - Adjusted top spacing */
   .viewport {
     padding: 24px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     height: auto;
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - 56px - env(safe-area-inset-top, 0px));
+    min-height: calc(100dvh - 56px - env(safe-area-inset-top, 0px));
     display: block;
     overflow: visible;
   }
@@ -2528,15 +2545,27 @@ html.lang-ar .btn-menu {
 @media (max-width: 767px) {
   .viewport {
     padding: 16px 12px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .brand-page {
     padding: 24px 16px;
+    padding-left: calc(16px + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(16px + env(safe-area-inset-right, 0px)) !important;
   }
 
-  /* Compact Mobile Header Padding & Sizing */
+  /* Compact Mobile Header Padding & Sizing with safe-area support */
   .sidebar {
     padding: 8px 12px !important;
+    padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: 8px !important;
+    padding-left: calc(12px + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+  }
+
+  html.lang-ar .sidebar {
+    padding-left: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    padding-right: calc(12px + env(safe-area-inset-left, 0px)) !important;
   }
 
   .brand-meta {

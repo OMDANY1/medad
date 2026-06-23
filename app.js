@@ -308,26 +308,55 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error("Invalid Lottie JSON structure: missing version key 'v'");
       }
       
-      // Initialize Lottie
+      // Initialize Lottie with SVG-to-Canvas renderer fallback for iOS Safari compatibility
       if (typeof lottie !== 'undefined') {
+        const loadLottie = (container, data) => {
+          let anim = null;
+          try {
+            anim = lottie.loadAnimation({
+              container: container,
+              renderer: 'svg',
+              loop: true,
+              autoplay: false,
+              animationData: data
+            });
+            
+            // Handle SVG rendering errors dynamically by falling back to Canvas
+            anim.addEventListener('error', (err) => {
+              console.warn("Lottie SVG animation runtime error, reloading using canvas renderer:", err);
+              try {
+                anim.destroy();
+              } catch (destErr) {}
+              anim = lottie.loadAnimation({
+                container: container,
+                renderer: 'canvas',
+                loop: true,
+                autoplay: false,
+                animationData: data
+              });
+            });
+          } catch (err) {
+            console.warn("Lottie SVG initialization failed, falling back to canvas:", err.message);
+            try {
+              if (anim) anim.destroy();
+            } catch (destErr) {}
+            anim = lottie.loadAnimation({
+              container: container,
+              renderer: 'canvas',
+              loop: true,
+              autoplay: false,
+              animationData: data
+            });
+          }
+          return anim;
+        };
+
         if (containerEn) {
-          lottieAnimEn = lottie.loadAnimation({
-            container: containerEn,
-            renderer: 'svg',
-            loop: true,
-            autoplay: false,
-            animationData: animData
-          });
+          lottieAnimEn = loadLottie(containerEn, animData);
         }
         
         if (containerAr) {
-          lottieAnimAr = lottie.loadAnimation({
-            container: containerAr,
-            renderer: 'svg',
-            loop: true,
-            autoplay: false,
-            animationData: animData
-          });
+          lottieAnimAr = loadLottie(containerAr, animData);
         }
         
         bindReplayControls();
