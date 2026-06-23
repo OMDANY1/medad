@@ -389,4 +389,31 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initialize Lottie
   initLottiePlayers();
+
+  // ----------------------------------------------------
+  // 8. Dynamic Mobile Header Height Calculation
+  // ----------------------------------------------------
+  function updateHeaderOffset() {
+    if (window.innerWidth < 1280) {
+      if (sidebar) {
+        const rect = sidebar.getBoundingClientRect();
+        const height = rect.height;
+        document.documentElement.style.setProperty('--header-height-dynamic', `${height}px`);
+      }
+    } else {
+      document.documentElement.style.removeProperty('--header-height-dynamic');
+    }
+  }
+
+  if (sidebar && typeof ResizeObserver !== 'undefined') {
+    const headerObserver = new ResizeObserver(() => {
+      updateHeaderOffset();
+    });
+    headerObserver.observe(sidebar);
+  }
+
+  window.addEventListener('resize', updateHeaderOffset);
+  window.addEventListener('orientationchange', updateHeaderOffset);
+  updateHeaderOffset();
+  setTimeout(updateHeaderOffset, 150);
 });

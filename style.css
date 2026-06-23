@@ -2330,8 +2330,9 @@ html.lang-ar .btn-menu {
   .sidebar {
     width: 100%;
     height: calc(56px + env(safe-area-inset-top, 0px));
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -2417,10 +2418,11 @@ html.lang-ar .btn-menu {
   /* Viewport and Book Container adjustments - Adjusted top spacing */
   .viewport {
     padding: 24px;
+    padding-top: calc(var(--header-height-dynamic, 56px) + env(safe-area-inset-top, 0px)) !important;
     padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     height: auto;
-    min-height: calc(100vh - 56px - env(safe-area-inset-top, 0px));
-    min-height: calc(100dvh - 56px - env(safe-area-inset-top, 0px));
+    min-height: calc(100vh - calc(56px + env(safe-area-inset-top, 0px)));
+    min-height: calc(100dvh - calc(56px + env(safe-area-inset-top, 0px)));
     display: block;
     overflow: visible;
   }
@@ -2545,6 +2547,7 @@ html.lang-ar .btn-menu {
 @media (max-width: 767px) {
   .viewport {
     padding: 16px 12px;
+    padding-top: calc(var(--header-height-dynamic, 56px) + env(safe-area-inset-top, 0px)) !important;
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
