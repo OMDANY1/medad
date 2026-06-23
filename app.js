@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const navItems = document.querySelectorAll('.nav-item');
   const bookContainer = document.querySelector('.book-container');
   const viewport = document.querySelector('.viewport');
+  const sidebar = document.querySelector('.sidebar');
+  const btnMenuToggle = document.getElementById('btn-menu-toggle');
   
   let currentPageIndex = 0;
   
@@ -15,6 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function adjustScale() {
     if (window.matchMedia('print').matches) {
+      bookContainer.style.transform = 'none';
+      return;
+    }
+    
+    // Disable scale transform on tablets and mobile screens (< 1280px)
+    if (window.innerWidth < 1280) {
       bookContainer.style.transform = 'none';
       return;
     }
@@ -77,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setLanguage(savedLang);
 
   // ----------------------------------------------------
-  // 3. Slide Navigation System
+  // 3. Slide Navigation System & Drawer Autoclose
   // ----------------------------------------------------
   function goToPage(index) {
     if (index < 0 || index >= pages.length) return;
@@ -88,6 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPageIndex = index;
     pages[currentPageIndex].classList.add('active');
     navItems[currentPageIndex].classList.add('active');
+    
+    // Close sidebar drawer on mobile/tablet after navigating
+    if (sidebar) {
+      sidebar.classList.remove('drawer-open');
+    }
     
     handlePageEnter(currentPageIndex);
   }
@@ -137,7 +150,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 4. Mobile Screen Simulator Scoped Swapper (Prevents Cross-Talk)
+  // 4. Hamburger Menu Drawer Navigation Logic
+  // ----------------------------------------------------
+  if (btnMenuToggle && sidebar) {
+    btnMenuToggle.addEventListener('click', (e) => {
+      sidebar.classList.toggle('drawer-open');
+      e.stopPropagation(); // Prevent immediate closing from document listener
+    });
+    
+    // Close drawer when clicking outside
+    document.addEventListener('click', (e) => {
+      if (sidebar.classList.contains('drawer-open')) {
+        if (!sidebar.contains(e.target)) {
+          sidebar.classList.remove('drawer-open');
+        }
+      }
+    });
+  }
+
+  // ----------------------------------------------------
+  // 5. Mobile Screen Simulator Scoped Swapper (Prevents Cross-Talk)
   // ----------------------------------------------------
   function initMobileSimulators() {
     const scopes = ['.lang-en', '.lang-ar'];
@@ -213,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileSimulators();
 
   // ----------------------------------------------------
-  // 5. Fullscreen & Print Controller triggers
+  // 6. Fullscreen & Print Controller triggers
   // ----------------------------------------------------
   const btnFullscreen = document.getElementById('btn-fullscreen');
   if (btnFullscreen) {
@@ -236,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 6. Page 20: Robust Lottie Player Initialization
+  // 7. Page 20: Robust Lottie Player Initialization
   // ----------------------------------------------------
   let lottieAnimEn = null;
   let lottieAnimAr = null;
